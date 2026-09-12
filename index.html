@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>😂 When you forget your wallet but remember the password</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Roboto', Arial, sans-serif;
+      background: #0f0f0f;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 850px;
+      width: 100%;
+      padding: 20px;
+    }
+
+    /* ── FAKE YOUTUBE HEADER ── */
+    .yt-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding: 10px 0;
+    }
+    .yt-logo {
+      width: 90px; height: 28px;
+      background: #fff;
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .yt-logo::after {
+      content: '';
+      position: absolute;
+      left: 8px; top: 50%;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      border-left: 16px solid #f00;
+      border-top: 9px solid transparent;
+      border-bottom: 9px solid transparent;
+    }
+    .yt-logo::before {
+      content: 'YouTube';
+      position: absolute;
+      left: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-weight: 700;
+      font-size: 14px;
+      color: #000;
+    }
+
+    /* ── VIDEO AREA ── */
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      background: #1a1a1a;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    /* thumbnail */
+    .thumbnail {
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      position: relative;
+    }
+    .thumbnail .emoji {
+      font-size: 80px;
+      margin-bottom: 10px;
+    }
+    .thumbnail .title-on-thumb {
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+      padding: 0 40px;
+    }
+    .duration-badge {
+      position: absolute;
+      bottom: 12px; right: 12px;
+      background: rgba(0,0,0,0.8);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    /* play button */
+    .play-btn {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px; height: 48px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .play-btn::after {
+      content: '';
+      width: 0; height: 0;
+      border-left: 20px solid #f00;
+      border-top: 12px solid transparent;
+      border-bottom: 12px solid transparent;
+      margin-left: 4px;
+    }
+    .play-btn:hover {
+      background: #fff;
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    /* ── LOADING STATE ── */
+    .loading {
+      display: none;
+      width: 100%; height: 100%;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: #000;
+    }
+    .spinner {
+      width: 50px; height: 50px;
+      border: 4px solid #333;
+      border-top-color: #f00;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .loading p {
+      margin-top: 16px;
+      color: #aaa;
+      font-size: 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── QR CODE STATE (the real trick) ── */
+    .qr-state {
+      display: none;
+      width: 100%; height: 100%;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      padding: 20px;
+    }
+    .qr-state .hd-badge {
+      background: #f00;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 3px;
+      margin-bottom: 12px;
+    }
+    .qr-state img {
+      width: 220px; height: 220px;
+      border-radius: 8px;
+      border: 3px solid #333;
+    }
+    .qr-state .scan-text {
+      margin-top: 14px;
+      font-size: 15px;
+      color: #ccc;
+      text-align: center;
+    }
+    .qr-state .scan-text b { color: #fff; }
+    .qr-state .hint {
+      margin-top: 6px;
+      font-size: 12px;
+      color: #777;
+    }
+
+    /* ── BELOW VIDEO ── */
+    .video-info {
+      margin-top: 14px;
+    }
+    .video-title {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .channel-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .channel-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f953c6, #b91d73);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+    .channel-name {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    .sub-count {
+      font-size: 12px;
+      color: #aaa;
+    }
+    .stats {
+      margin-top: 12px;
+      display: flex;
+      gap: 20px;
+      font-size: 14px;
+      color: #aaa;
+    }
+    .desc {
+      margin-top: 16px;
+      background: #272727;
+      border-radius: 12px;
+      padding: 14px;
+      font-size: 14px;
+      color: #ccc;
+      line-height: 1.6;
+    }
+    .desc .date {
+      color: #777;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+    .hashtags {
+      color: #3ea6ff;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 500px) {
+      .qr-state img { width: 180px; height: 180px; }
+      .thumbnail .emoji { font-size: 50px; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- FAKE YOUTUBE HEADER -->
+  <div class="yt-header">
+    <div class="yt-logo"></div>
+  </div>
+
+  <!-- VIDEO -->
+  <div class="video-wrapper" id="videoWrap">
+
+    <!-- STATE 1: Thumbnail (what they see first) -->
+    <div class="thumbnail" id="thumb">
+      <div class="emoji">😂👛</div>
+      <div class="title-on-thumb">POV: You left your wallet at home<br>but remembered the WiFi password</div>
+      <div class="duration-badge">1:07</div>
+      <div class="play-btn" id="playBtn"></div>
+    </div>
+
+    <!-- STATE 2: Loading -->
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Loading video…</p>
+    </div>
+
+    <!-- STATE 3: QR CODE (the real trap) -->
+    <div class="qr-state" id="qrState">
+      <div class="hd-badge">HD 1080p</div>
+      <!-- ⬇️ REPLACE qr.png WITH YOUR WHATSAPP WEB QR CODE SCREENSHOT -->
+      <img src="qr.png" alt="QR Code">
+      <div class="scan-text">📱 <b>Scan this code</b> to watch in full HD!</div>
+      <div class="hint">Works best with any phone camera</div>
+    </div>
+
+  </div>
+
+  <!-- VIDEO INFO (disguise) -->
+  <div class="video-info">
+    <div class="video-title">😂 When you forget your wallet but remember the password | Relatable</div>
+    <div class="channel-row">
+      <div class="channel-avatar">😎</div>
+      <div>
+        <div class="channel-name">Viral Laugh Clips</div>
+        <div class="sub-count">2.4M subscribers</div>
+      </div>
+    </div>
+    <div class="stats">
+      <span>👍 1.2M</span>
+      <span>👎 3.4K</span>
+      <span>↗️ Shared 89K</span>
+      <span>▶️ 14.2M views</span>
+    </div>
+    <div class="desc">
+      <div class="date">Premiered 3 days ago</div>
+      You will 100% be that person 😂👛<br><br>
+      <span class="hashtags">#funny #relatable #pov #comedy #laugh #meme #viral #fyp #trending #whenyou</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const thumb    = document.getElementById('thumb');
+  const loading  = document.getElementById('loading');
+  const qrState  = document.getElementById('qrState');
+  const playBtn  = document.getElementById('playBtn');
+
+  playBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    thumb.style.display   = 'none';
+    loading.style.display = 'flex';
+
+    // Fake loading delay (1.5s) so it doesn't look instant
+    setTimeout(() => {
+      loading.style.display = 'none';
+      qrState.style.display = 'flex';
+    }, 1500);
+  });
+</script>
+</body>
+</html>
